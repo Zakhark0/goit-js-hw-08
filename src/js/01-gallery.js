@@ -1,7 +1,9 @@
+// Add imports above this line
 import { galleryItems } from './gallery-items.js';
+
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-
+// Change code below this line
 const itemsEl = document.querySelector('.gallery');
 const imagesEl = galleryItems
   .map(({ preview, original, description }) => {
@@ -14,7 +16,6 @@ const imagesEl = galleryItems
   .join('');
 
 itemsEl.innerHTML = imagesEl;
-itemsEl.style.cssText = `list-style: none`;
 
 var lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
