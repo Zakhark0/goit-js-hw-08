@@ -1,51 +1,32 @@
 import throttle from 'lodash.throttle';
 
 const formEl = document.querySelector('.feedback-form');
-const textareaEl = document.querySelector(`textarea`);
-const emailEl = document.querySelector('input');
+const STORAGE_KEY = 'feedback-form-state';
+let feedbackFormState = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  email: '',
+  message: '',
+};
 
-const STORAGE_KEY = 'feedback - form - state';
-const formData = {};
+formEl.email.value = feedbackFormState.email;
+formEl.message.value = feedbackFormState.message;
 
-textareaEl.addEventListener('input', throttle(getInputText, 700));
-formEl.addEventListener('submit', onFormSubmit);
-formEl.addEventListener('input', evt => {
-  formData[evt.target.name] = evt.target.value;
-  const formToJson = JSON.stringify(formData);
-  localStorage.setItem('form', formToJson);
-});
+formEl.addEventListener(
+  'input',
+  throttle(event => {
+    feedbackFormState[event.target.name] = event.target.value;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(feedbackFormState));
+  }, 700)
+);
 
-savedText();
-function onFormSubmit(evt) {
-  if (!textareaEl.value) {
-    alert('Бігом заповняти форму!!!');
-    localStorage.removeItem('form');
-    return;
+formEl.addEventListener('submit', event => {
+  event.preventDefault();
+  if (formEl.email.value == '') {
+    return alert('А де Email?');
   }
-  if (!emailEl.value) {
-    alert('A де Email???');
-    localStorage.removeItem('form');
-    return;
+  if (formEl.message.value == '') {
+    return alert('Бігом заповнювати форму!!!!');
   }
-
-  const savedFormText = JSON.parse(localStorage.getItem('form'));
-
-  console.log(savedFormText);
-
-  evt.preventDefault();
-  evt.target.reset();
+  console.log(feedbackFormState);
+  event.target.reset();
   localStorage.removeItem(STORAGE_KEY);
-}
-
-function getInputText(evt) {
-  const inputText = evt.target.value;
-
-  localStorage.setItem(STORAGE_KEY, inputText);
-}
-
-function savedText(evt) {
-  const savedMassage = localStorage.getItem(STORAGE_KEY);
-  if (savedMassage) {
-    textareaEl.value = savedMassage;
-  }
-}
+});
